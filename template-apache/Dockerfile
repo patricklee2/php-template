@@ -7,11 +7,12 @@ COPY init_container.sh /bin/
 COPY hostingstart.html /home/site/wwwroot/hostingstart.html
 
 RUN chmod 755 /bin/init_container.sh \
-    && mkdir -p /home/LogFiles/ \
-    && echo "root:Docker!" | chpasswd \
-    && echo "cd /home/site/wwwroot" >> /etc/bash.bashrc \
-    && ln -s /home/site/wwwroot /var/www/html \
-    && mkdir -p /opt/startup
+   && mkdir -p /home/LogFiles/ \
+   && echo "root:Docker!" | chpasswd \
+   && echo "cd /home/site/wwwroot" >> /etc/bash.bashrc \
+   && ln -s /home/site/wwwroot /var/www/html \
+   && ln -s /home/LogFiles /var/log/apache2 \
+   && mkdir -p /opt/startup
 
 # configure startup
 COPY sshd_config /etc/ssh/
@@ -32,9 +33,9 @@ ENV WEBSITE_INSTANCE_ID localInstance
 ENV PATH ${PATH}:/home/site/wwwroot
 
 RUN { \
-    echo 'DocumentRoot /home/site/wwwroot'; \
-    echo 'DirectoryIndex default.htm default.html index.htm index.html index.php hostingstart.html'; \
-    echo 'ServerName localhost'; \
+   echo 'DocumentRoot /home/site/wwwroot'; \
+   echo 'DirectoryIndex default.htm default.html index.htm index.html index.php hostingstart.html'; \
+   echo 'ServerName localhost'; \
 } >> /etc/apache2/apache2.conf
 
 WORKDIR /home/site/wwwroot
